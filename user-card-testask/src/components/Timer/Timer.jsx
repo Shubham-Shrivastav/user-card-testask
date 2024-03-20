@@ -24,7 +24,9 @@ const Timer = () => {
         axios.get(`http://worldtimeapi.org/api/timezone/${region}`)
             .then(response => {
                 console.log("API Response:", response.data);
-                setCurrentTime(response.data.datetime);
+                const time = moment.parseZone(response.data.datetime).format();            
+                console.log('fetchtime', time)
+                setCurrentTime(time);
             })
             .catch(error => {
                 console.error("Error fetching current time:", error);
@@ -35,7 +37,8 @@ const Timer = () => {
         let interval = null;
         if (isRunning) {
             interval = setInterval(() => {
-                setCurrentTime(prevTime => moment(prevTime).add(1, 'seconds').format());
+                console.log('useeffect', currentTime)
+                setCurrentTime(prevTime => moment.parseZone(prevTime).add(1, 'seconds').format());
             }, 1000);
         } else {
             clearInterval(interval);
@@ -52,16 +55,21 @@ const Timer = () => {
         console.log(selectedCountry);
     }, [selectedCountry])
 
+    const changeCountry = (country) => {
+        setSelectedCountry(country)
+        fetchCurrentTime(country)
+    }
+
     return (
         <div className="flex justify-between items-center my-4 space-x-8">
             <div className="flex">
                 <select className="h-8 w-28 text-xs rounded-md bg-[#31363F] text-[#EEEEEE] sm:px-2"
-                    value={selectedCountry} onChange={(e) => { setSelectedCountry(e.target.value); fetchCurrentTime(e.target.value); }}>
+                    value={selectedCountry} onChange={(e) => changeCountry(e.target.value) }>
                     {countries.map((country, index) => (
                         <option key={index} value={country}>{country}</option>
                     ))}
                 </select>
-                <h2 className="m-2 text-[#EEEEEE] text-xs">Time: {moment(currentTime).format('HH:mm:ss')}</h2>
+                <h2 className="m-2 text-[#EEEEEE] text-xs">Time: {moment.parseZone(currentTime).format('HH:mm:ss')}</h2>
             </div>
             <button className="text-xs px-2 py-1 bg-green-500 hover:bg-green-700 text-white sm:text-base sm:py-0 sm:px-4 rounded m-1" onClick={handleStartStop}>{isRunning ? 'Pause' : 'Start'}</button>
         </div>
