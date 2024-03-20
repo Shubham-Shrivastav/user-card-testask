@@ -9,7 +9,7 @@ const Timer = () => {
     const [countries, setCountries] = useState([]);
 
     useEffect(() => {
-        axios.get("http://worldtimeapi.org/api/timezone")
+        axios.get("https://worldtimeapi.org/api/timezone")
             .then(response => {
                 setCountries(response.data);
                 setSelectedCountry(response.data[0]);
@@ -21,10 +21,10 @@ const Timer = () => {
     }, []);
 
     const fetchCurrentTime = (region) => {
-        axios.get(`http://worldtimeapi.org/api/timezone/${region}`)
+        axios.get(`https://worldtimeapi.org/api/timezone/${region}`)
             .then(response => {
                 console.log("API Response:", response.data);
-                const time = moment.parseZone(response.data.datetime).format();            
+                const time = moment.parseZone(response.data.datetime).format();
                 console.log('fetchtime', time)
                 setCurrentTime(time);
             })
@@ -64,7 +64,7 @@ const Timer = () => {
         <div className="flex justify-between items-center my-4 space-x-8">
             <div className="flex">
                 <select className="h-8 w-28 text-xs rounded-md bg-[#31363F] text-[#EEEEEE] sm:px-2"
-                    value={selectedCountry} onChange={(e) => changeCountry(e.target.value) }>
+                    value={selectedCountry} onChange={(e) => changeCountry(e.target.value)}>
                     {countries.map((country, index) => (
                         <option key={index} value={country}>{country}</option>
                     ))}
