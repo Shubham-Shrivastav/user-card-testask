@@ -7,9 +7,9 @@ const Post = ({ post, onClick }) => {
   };
 
   return (
-    <div className="post-card bg-white border border-gray-300 rounded p-4 m-2 cursor-pointer hover:scale-105" onClick={handleClick}>
-      <h2 className="post-title text-xl font-bold">{post.title}</h2>
-      <p className="post-content text-base mt-2 text-gray-700">{post.content}</p>
+    <div className="bg-[#31363F] border border-gray-300 rounded p-4 m-2 cursor-pointer hover:scale-105" onClick={handleClick}>
+      <h2 className="text-xl font-semi-bold text-[#76ABAE]">{post.title}</h2>
+      <p className="text-base mt-2 text-[#EEEEEE]">{post.body}</p>
     </div>
   );
 };
