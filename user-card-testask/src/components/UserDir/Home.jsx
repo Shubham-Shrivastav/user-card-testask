@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Timer from "../Timer/Timer";
+import {BallTriangle} from 'react-loader-spinner'
 
 const Home = () => {
   const [users, setUsers] = useState([]);
@@ -39,34 +39,45 @@ const Home = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen"><BallTriangle
+    height={100}
+    width={100}
+    radius={5}
+    color="#EEEEEE"
+    ariaLabel="ball-triangle-loading"
+    wrapperStyle={{}}
+    wrapperClass=""
+    visible={true}
+    /></div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div >Error: {error}</div>;
   }
 
   return (
-    <div className="user-directory text-center p-4">
-      <h1>User Directory</h1>
-      <Timer />
-      <div className="user-cards flex flex-wrap justify-center flex-col">
+    <div className="text-center p-4">
+      <h1 className="text-4xl text-[#EEEEEE] mx-auto my-6 font-semibold">Directory</h1>
+      <div className="flex flex-wrap justify-center flex-col">
         {users.map((user) => (
           <Link
             key={user.id}
             to={`/user/${user.id}`}
-            className="user-card-link"
           >
-            <div className="user-card bg-white border border-gray-300 rounded p-4 m-4 flex-1 max-w-full transition-transform duration-200 ease-in-out hover:scale-105">
-              <div className="user-card-header mb-4">
-                <h2>Name: {user.name}</h2>
-                <h2>Posts: {user.posts}</h2>
+            <div className="bg-[#31363F] border border-gray-400 rounded p-4 m-2 flex flex-col justify-between transition-transform duration-200 ease-in-out hover:shadow-lg hover:-translate-y-1">
+              <div className="flex justify-between">
+                <div>
+                  <h2 className="text-[#EEEEEE]">Name: {user.name}</h2>
+                </div>
+                <div>
+                  <h2 className="text-[#EEEEEE]">Posts: {user.posts}</h2>
+                </div>
               </div>
             </div>
           </Link>
         ))}
       </div>
-    </div>
+    </div >
   );
 };
 

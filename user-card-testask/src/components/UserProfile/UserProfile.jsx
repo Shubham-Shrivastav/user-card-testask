@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import Post from "../Posts/Post";
 import PostPopup from "../PostsPopUp/PostPopUp";
+import Timer from "../Timer/Timer";
+import { BallTriangle } from 'react-loader-spinner'
 
 const UserProfile = () => {
   const [userData, setUserData] = useState(null);
@@ -41,40 +43,50 @@ const UserProfile = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen"><BallTriangle
+      height={100}
+      width={100}
+      radius={5}
+      color="#EEEEEE"
+      ariaLabel="ball-triangle-loading"
+      wrapperStyle={{}}
+      wrapperClass=""
+      visible={true}
+    /></div>;
   }
 
   if (error || !userData) {
-    return <div className="user-profile bg-gray-200 p-4 text-center relative">Error fetching user data</div>;
+    return <div className="bg-gray-200 p-4 text-center relative">Error fetching user data</div>;
   }
 
   return (
-    <div className="user-profile bg-gray-200 p-4 text-center relative">
-      <h1 className="mb-4">Profile Page</h1>
-      <div className="go-back-button absolute top-4 left-4">
+    <div className=" bg-[#222831] p-4 text-center relative">
+      <div className="flex flex-col items-start sm:flex sm:flex-row sm:justify-between mb-4">
         <Link to="/">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Back</button>
+          <button className="my-5 hidden sm:block bg-blue-500 hover:bg-blue-700 text-white m-1 px-4 rounded">Back</button>
         </Link>
+        <Timer />
       </div>
-      <div className="user-details bg-white border border-gray-300 rounded p-4 mb-4">
-        <div className="user-row flex justify-between mb-4">
-          <div className="user-column text-left">
+      <h1 className="text-4xl text-[#EEEEEE] mx-auto my-6 font-semibold">Profile Page</h1>
+
+      <div className="bg-[#31363F] border border-gray-300 rounded p-4 mb-4">
+        <div className="flex justify-between mb-4">
+          <div className="text-left text-[#EEEEEE]">
             <p>Name: {userData.name}</p>
             <p>Username: {userData.username}</p>
+            <p>catchPhrase: {userData.company.catchPhrase}</p>
+          </div>
+          <div className="text-left text-[#EEEEEE]">
+            <p>Address: {userData.address.suite}, {userData.address.city}</p>
             <p>Email: {userData.email}</p>
             <p>Phone: {userData.phone}</p>
-          </div>
-          <div className="user-column text-left">
-            <p>Address: {userData.address.street}, {userData.address.suite}, {userData.address.city}, {userData.address.zipcode}</p>
-            <p>Website: {userData.website}</p>
-            <p>Company: {userData.company.name}</p>
           </div>
         </div>
       </div>
 
-      <div className="user-posts flex flex-wrap">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {userPosts.map((post) => (
-          <div key={post.id} className="post-wrapper flex-grow-0 flex-shrink-0 w-1/3 mb-4">
+          <div key={post.id}>
             <Post post={post} onClick={handlePostClick} />
           </div>
         ))}

@@ -1,25 +1,79 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import moment from "moment";
 
-function Timer() {
-    const [currentTime, setCurrentTime] = useState(new Date());
+const Timer = () => {
+    const [currentTime, setCurrentTime] = useState('');
+    const [isRunning, setIsRunning] = useState(true);
+    const [selectedCountry, setSelectedCountry] = useState('');
+    const [countries, setCountries] = useState([]);
 
     useEffect(() => {
-        const timerID = setInterval(() => tick(), 1000);
+        axios.get("http://worldtimeapi.org/api/timezone")
+            .then(response => {
+                setCountries(response.data);
+                setSelectedCountry(response.data[0]);
+                fetchCurrentTime(response.data[0]);
+            })
+            .catch(error => {
+                console.error("Error fetching countries and timezones:", error);
+            });
+    }, []);
 
-        return function cleanup() {
-            clearInterval(timerID);
-        };
-    });
+    const fetchCurrentTime = (region) => {
+        axios.get(`http://worldtimeapi.org/api/timezone/${region}`)
+            .then(response => {
+                console.log("API Response:", response.data);
+                const time = moment.parseZone(response.data.datetime).format();            
+                console.log('fetchtime', time)
+                setCurrentTime(time);
+            })
+            .catch(error => {
+                console.error("Error fetching current time:", error);
+            });
+    };
 
-    function tick() {
-        setCurrentTime(new Date());
+    useEffect(() => {
+        let interval = null;
+        if (isRunning) {
+            interval = setInterval(() => {
+                console.log('useeffect', currentTime)
+                setCurrentTime(prevTime => moment.parseZone(prevTime).add(1, 'seconds').format());
+            }, 1000);
+        } else {
+            clearInterval(interval);
+        }
+        return () => clearInterval(interval);
+    }, [isRunning]);
+
+
+    const handleStartStop = () => {
+        setIsRunning(prevIsRunning => !prevIsRunning);
+    };
+
+    useEffect(() => {
+        console.log(selectedCountry);
+    }, [selectedCountry])
+
+    const changeCountry = (country) => {
+        setSelectedCountry(country)
+        fetchCurrentTime(country)
     }
 
     return (
-        <div>
-            <div>{currentTime.toLocaleTimeString()}</div>
+        <div className="flex justify-between items-center my-4 space-x-8">
+            <div className="flex">
+                <select className="h-8 w-28 text-xs rounded-md bg-[#31363F] text-[#EEEEEE] sm:px-2"
+                    value={selectedCountry} onChange={(e) => changeCountry(e.target.value) }>
+                    {countries.map((country, index) => (
+                        <option key={index} value={country}>{country}</option>
+                    ))}
+                </select>
+                <h2 className="m-2 text-[#EEEEEE] text-xs">Time: {moment.parseZone(currentTime).format('HH:mm:ss')}</h2>
+            </div>
+            <button className="text-xs px-2 py-1 bg-green-500 hover:bg-green-700 text-white sm:text-base sm:py-0 sm:px-4 rounded m-1" onClick={handleStartStop}>{isRunning ? 'Pause' : 'Start'}</button>
         </div>
     );
-}
+};
 
 export default Timer;
